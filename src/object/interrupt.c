@@ -197,7 +197,7 @@ void deletedIRQHandler(irq_t irq)
     setIRQState(IRQInactive, irq);
 }
 
-void handleInterrupt(irq_t irq)
+static void handleInterrupt(irq_t irq)
 {
     if (unlikely(IRQT_TO_IRQ(irq) > maxIRQ)) {
         /* The interrupt number is out of range. Pretend it did not happen by
@@ -294,4 +294,19 @@ void setIRQState(irq_state_t irqState, irq_t irq)
     }
 #endif
     maskInterrupt(irqState == IRQInactive, irq);
+}
+
+void maybeHandleInterrupt(void)
+{
+    irq_t irq;
+
+    irq = getActiveIRQ();
+    if (IRQT_TO_IRQ(irq) != IRQT_TO_IRQ(irqInvalid)) {
+        handleInterrupt(irq);
+    } else {
+#ifdef CONFIG_IRQ_REPORTING
+        userError("Spurious interrupt!");
+#endif
+        handleSpuriousIRQ();
+    }
 }

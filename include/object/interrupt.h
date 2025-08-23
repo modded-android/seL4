@@ -21,7 +21,6 @@ void invokeIRQHandler_SetIRQHandler(irq_t irq, cap_t cap, cte_t *slot);
 void invokeIRQHandler_ClearIRQHandler(irq_t irq);
 void deletingIRQHandler(irq_t irq);
 void deletedIRQHandler(irq_t irq);
-void handleInterrupt(irq_t irq);
+static inline void maybeHandleInterrupt(void);
 bool_t isIRQActive(irq_t irq);
 void setIRQState(irq_state_t irqState, irq_t irq);
-
